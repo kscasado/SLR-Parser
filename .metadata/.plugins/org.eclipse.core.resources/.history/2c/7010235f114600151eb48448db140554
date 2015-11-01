@@ -1,0 +1,143 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+
+//Assuming a grammar is given in a text file and 
+//uses :: to signify a production, given the usual 
+//best practice having Variables as capitals and symbols as
+//non-capital characters/symbols
+public class Grammar {
+	private Set<String> terminals= new LinkedHashSet<String>();
+	private Set<String> variables=new LinkedHashSet<String>();
+	private List<String> productions=new ArrayList<String>();
+	private Map<String,Set<String>> First=new TreeMap<String,Set<String>>();
+	private Map<String,Set<String>> Follow=new TreeMap<String,Set<String>>();
+	public Grammar(String fileName){
+		try{
+			getProductionsFromFile(fileName);
+			findTerminalsAndVarsFromList();
+			findFirstFromList();
+			findFollowFromList();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+//		System.out.println("Terminals:");
+//		for(String s: terminals){
+//			System.out.println(s);
+//		}
+//		System.out.println("Variables:");
+//		for(String s: variables){
+//			System.out.println(s);
+//		}
+		for(String key:First.keySet()){
+			System.out.print(key+":");
+			System.out.println(First.get(key));
+			
+		}
+		
+		
+	}
+	private void getProductionsFromFile(String name)throws IOException{
+		String fileText;
+		try {
+			//URL path = Grammar.class.getResource(name);
+			File f = new File(name);
+			FileReader inputFile = new FileReader(name);
+			BufferedReader br = new BufferedReader(inputFile);
+			
+			while((fileText=br.readLine())!=null){
+				productions.add(fileText);
+			}
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+	}
+	//go through the list and find all the terminals
+	private void findTerminalsAndVarsFromList(){
+		//iterate through productions identifying terminals
+		for(String s : productions){
+			String[] VarList = s.split("\\s+");
+			for(String str: VarList){
+				//check if it is not a Capital letter or production symbol
+				//System.out.println("String str:"+str);
+			
+			
+				if(str.charAt(0)<'A'||str.charAt(0)>'Z'){
+					if(str.charAt(0)!=':'){
+					
+					terminals.add(str);
+					}
+				}
+				//make sure it is not the production symbol
+				else if(str.charAt(0)!=':'){
+					variables.add(str);
+					
+				}
+			}
+			
+		}
+	}
+	
+	
+	private void findFirstFromList(){
+		for(String s: variables){
+			//getFirst(s);
+			First.put(s,getFirst(s));
+			//System.out.println(getFirst(s));
+			
+			
+		}
+		
+//		for(String s:First.keySet()){
+//			System.out.println(First.get(s));
+//		}
+		
+	}
+	private Set<String> getFirst(String v){
+		Set<String> FirstSet = new LinkedHashSet<String>();
+		for(String s:productions){
+			String [] prodList = s.split("\\s");
+			//System.out.println(prodList[0]);
+			
+			if (prodList[0].equals(v)){
+				//System.out.println("got here");
+				String [] list = s.split("::");
+//				for(String split:list){
+//					System.out.print(split);
+//				}
+				
+				//System.out.println(list[1]);
+				FirstSet.add(list[1]);
+			}
+		}
+		//System.out.println(FirstSet);
+		
+		
+		return FirstSet;
+	}
+	private void findFollowFromList(){
+		
+		
+		
+		
+		
+	}
+	public Map<String, Set<String>> getFollow(){
+		return Follow;
+	}
+	public Map<String,Set<String>> getFirst(){
+		return First;
+	}
+
+}

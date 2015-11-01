@@ -1,0 +1,8 @@
+
+public class SLRTable {
+	private Grammar grammar;
+	public SLRTable(Grammar g){
+		grammar=g;
+		g.productions.add(g.STARTSYMBOL+"'")
+	}
+}

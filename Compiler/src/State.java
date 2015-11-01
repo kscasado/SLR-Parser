@@ -1,0 +1,27 @@
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+//Class for each state represented in the SLR
+
+public class State {
+	public State(int Number,ArrayList<Item>l){
+		list=l;
+		number = Number;
+	}
+	public void addItem(Item i){
+		list.add(i);
+	}
+	public int getNum(){
+		return number;
+	}
+	public ArrayList<Item> getList(){
+		return list;
+	}
+	public String toString(){
+		return "Number: "+number+" List: "+list+"\n";
+	}
+	
+	private int number;
+	public ArrayList<Item> list;
+	
+}

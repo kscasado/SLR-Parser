@@ -1,0 +1,7 @@
+
+public class SLRTable {
+	private Grammar grammer;
+	public SLRTable(Grammar g){
+		grammar=g;
+	}
+}

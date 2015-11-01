@@ -1,0 +1,14 @@
+import java.io.File;
+import java.io.IOException;
+
+public class Grammar {
+	public Grammar(String fileName){
+		text =openFile(fileName);
+		
+	}
+	private String openFile(String name)throws IOException{
+		
+	}
+	private String text;
+
+}

@@ -1,0 +1,7 @@
+
+public class BuildSLR {
+	private Grammar grammer;
+	public BuildSLR(Grammar g){
+		grammar=g;
+	}
+}

@@ -1,0 +1,16 @@
+import java.util.LinkedList;
+
+//Class for each state represented in the SLR
+
+public class State {
+	public State(int Number){
+		list=null;
+		number = Number
+	}
+	public void addItem(Item i){
+		list.push(i);
+	}
+	private int number;
+	private LinkedList<Item> list;
+	
+}

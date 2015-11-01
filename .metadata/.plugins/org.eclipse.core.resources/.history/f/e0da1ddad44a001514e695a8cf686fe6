@@ -1,0 +1,276 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+//Assuming a grammar is given in a text file and 
+//uses :: to signify a production, given the usual 
+//best practice having Variables as capitals and symbols as
+//non-capital characters/symbols
+public class Grammar {
+
+	public Set<String> terminals = new LinkedHashSet<String>();
+	private Set<String> variables = new LinkedHashSet<String>();
+	public List<String> productions = new ArrayList<String>();
+	private Map<String, Set<String>> First = new TreeMap<String, Set<String>>();
+	private Map<String, Set<String>> Follow = new TreeMap<String, Set<String>>();
+	public  String STARTSYMBOL;
+	public Grammar(String fileName) {
+		try {
+			getProductionsFromFile(fileName);
+			findTerminalsAndVarsFromList();
+			findFirstFromList();
+			findFollowFromList();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+//		for(String t: Follow.keySet()){
+//			System.out.println(t+": "+Follow.get(t));
+//		}
+	}
+
+	private void getProductionsFromFile(String name) throws IOException {
+		String fileText;
+		try {
+			File f = new File(name);
+			FileReader inputFile = new FileReader(name);
+			BufferedReader br = new BufferedReader(inputFile);
+			
+			while ((fileText = br.readLine()) != null) {
+				productions.add(fileText);
+			}
+			STARTSYMBOL=productions.get(0).split("\\s+")[0];
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// go through the list and find all the terminals
+	private void findTerminalsAndVarsFromList() {
+		// iterate through productions identifying terminals
+		for (String s : productions) {
+			String[] VarList = s.split("\\s+");
+			for (String str : VarList) {
+				// check if it is not a Capital letter or production symbol
+
+				if (str.charAt(0) < 'A' || str.charAt(0) > 'Z') {
+					if (str.charAt(0) != ':') {
+
+						terminals.add(str);
+					}
+				}
+				// make sure it is not the production symbol
+				else if (str.charAt(0) != ':') {
+					variables.add(str);
+
+				}
+			}
+
+		}
+	}
+
+	private void findFollowFromList() {
+
+		for (String s : variables) {
+			Follow.put(s, getFollow(s));
+		}
+	}
+
+	private Set<String> getFollow(String v) {
+		Set<String> FolList = new LinkedHashSet<String>();
+		Set<String> iterList = getFollowProd(v);
+		
+//		System.out.println("FollowProd:"+v+iterList);
+		// take care of first case
+		if (v.trim().equals(STARTSYMBOL)) {
+	//		System.out.println("adding $");
+			FolList.add("$");
+		}
+		if(iterList.size()==0){
+			
+			return FolList;
+		}
+		for(String s:iterList){
+			s.trim();
+			
+//			System.out.println(v+": "+s);
+			String []temp = s.split("::");
+			String[] terms = temp[1].split("\\s+");
+			for(int i = 0; i<terms.length;i++){
+				
+				if(terms[i].equals(v)){
+					
+//					System.out.println(i);
+//					System.out.println(terms.length);
+					if(!(i==terms.length-1)){
+						if(terminals.contains(terms[i+1].trim())){
+							
+							FolList.add(terms[i+1].trim());
+						}
+						else{
+							if(First.get(terms[i+1].trim()).contains("empty")){
+								if(!(i==terms.length-2)){
+									if(terminals.contains(terms[i+2].trim())){
+										FolList.add(terms[i+2].trim());
+									}
+									else{
+		//								System.out.println("First.getTerms called on "+terms[i+2].trim());
+										FolList.addAll(First.get(terms[i+2].trim()));
+									}
+								}
+								else{
+			//						System.out.println("recursive call is being made on:"+temp[0].trim());
+									FolList.addAll(getFollow(temp[0].trim()));
+								}
+							}
+							else{
+				//				System.out.println("Adding the FIrst from: "+terms[i+1].trim());
+								FolList.addAll(First.get(terms[i+1].trim()));
+							}
+						}
+					}
+					else{
+						
+					//	System.out.println("Getting Follow from:"+temp[0]+":");
+						if(temp[0].contains("S")||temp[0].trim().equals(v)){
+							break;
+						}
+						FolList.addAll(getFollow(temp[0].trim()));
+						//System.out.println("got here");
+					}
+					
+//					else if(i==terms.length-1){
+//						if(getFirst(terms[terms.length]).contains("empty")){
+//							
+//							FolList.addAll(getFollow(terms[0]));
+//						}
+//						else{
+//							FolList.addAll(First.get(terms[i+1]));
+//						}
+//					}
+//					else{
+//						
+//						FolList.addAll(First.get(terms[i+1]));
+//					}
+				}
+			}
+		}
+		//System.out.println(v+"is finished"+FolList);
+		return FolList;
+	}
+	private Set<String> getFollowProd(String v){
+		Set<String> prodList = new LinkedHashSet<String>();
+		for(String s: productions){
+			String [] parse = s.split("::");
+			for(String iter: parse[1].split("\\s+")){
+				if(iter.equals(v)){
+					prodList.add(s);
+				}
+			}
+		
+		}
+		return prodList;
+	}
+	private void findFirstFromList() {
+		for (String s : variables) {
+			First.put(s, getFirst(s));
+
+		}
+
+	}
+
+	// to check if variable produces epsilon
+	private boolean epsilonCase(String v) {
+
+		for (String item : getProductions(v)) {
+			if (item.trim().equals("empty")) {
+				return true;
+			}
+		}
+		return false;
+
+	}
+
+	private Set<String> getFirst(String v) {
+		Set<String> ProdList = new LinkedHashSet<String>(getProductions(v));
+		Set<String> FirstSet = new LinkedHashSet<String>();
+		// hacking this to erase concurrent modification
+		String[] items = ProdList.toArray(new String[FirstSet.size()]);
+		for (int i = 0; i < ProdList.size(); i++) {
+
+			String item = items[i];
+			String[] itemList = item.split("\\s+");
+
+			if (terminals.contains(itemList[0].trim())) {
+
+				FirstSet.add(itemList[0].trim());
+
+			} else if (variables.contains(itemList[0].trim())) {
+				if (epsilonCase(itemList[0].trim())) {
+					String temp = new String(item.substring(itemList[0].length(), item.length()));
+
+					if (temp.length() > 0) {
+						items[i] = (temp.trim());
+						// go back to check on the loop
+						i--;
+					}
+					// make sure to add empty to the first set
+					FirstSet.add("empty");
+				} else {
+					if (!itemList[0].trim().equals(v)) {
+						FirstSet.addAll(getFirst(itemList[0].trim()));
+
+					} else {
+						FirstSet.remove(item);
+					}
+
+				}
+
+			}
+
+		}
+		return FirstSet;
+	}
+
+	// iterate through the list and find all the productions for
+	// the given variable
+	private Set<String> getProductions(String var) {
+		Set<String> ProdSet = new LinkedHashSet<String>();
+		for (String s : productions) {
+			String[] prodList = s.split("\\s+");
+
+			if (prodList[0].equals(var)) {
+
+				String[] list = s.split("::");
+
+				ProdSet.add(list[1].trim());
+			}
+		}
+
+		return ProdSet;
+	}
+
+	public Set<String> getTerminals() {
+		return terminals;
+	}
+
+	public Set<String> getVariables() {
+		return variables;
+	}
+
+	public Map<String, Set<String>> getFollow() {
+		return Follow;
+	}
+
+	public Map<String, Set<String>> getFirst() {
+		return First;
+	}
+
+}

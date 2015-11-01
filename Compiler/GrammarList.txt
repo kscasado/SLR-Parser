@@ -1,0 +1,63 @@
+P :: L
+L :: L D 
+L :: D
+D :: Vd 
+D :: Fn
+Vd :: Ts id ; 
+Vd :: Ts id [ num ] ;
+Ts :: int 
+Ts :: void 
+Fn :: Ts id ( Ps ) Cs 
+Fn :: Ts main ( Ps ) Cs
+Ps :: Pl 
+Ps :: void
+Pl :: Pl , Pa 
+Pl :: Pa
+Pa :: Ts id 
+Pa :: Ts id [ ] 
+Cs :: { Ld Sl }
+Ld :: Ld Vd 
+Ld :: empty
+Sl :: Sl S 
+Sl :: empty
+S :: Es 
+S :: Cs 
+S :: Ss 
+S :: Is 
+S :: Rs
+Es :: E ; 
+Es :: ;
+Ss :: if ( E ) S 
+Ss :: if ( E ) S else S
+Is :: while ( E ) S
+Rs :: return ; 
+Rs :: return E ;
+E :: V = E 
+E :: Se
+V :: id 
+V :: id [ E ]
+Se :: Ae R Ae 
+Se :: Ae
+R :: <= 
+R :: < 
+R :: > 
+R :: >= 
+R :: == 
+R :: !=
+Ae :: Ae A T 
+Ae :: T
+A :: + 
+A :: - 
+T :: T M F 
+T :: F
+M :: * 
+M :: /  
+F :: ( E ) 
+F :: V 
+F :: C 
+F :: num
+C :: id ( Ar )
+Ar :: Al 
+Ar :: empty
+Al :: Al , E 
+Al :: E

@@ -1,0 +1,46 @@
+import java.util.ArrayList;
+
+//Class for the Item object
+public class Item {
+	
+	//Assign the private variables
+	public Item(String Symbol,int State,String Prods){
+		//TODO: Error Check
+		
+		symbol = Symbol;
+		state=State;
+		command = Prods;
+		
+		
+	}
+	public String toString(){
+		String s = "Symbol: "+ symbol+"\n"+"Command: "+command+"\n";
+		s+="Number: "+state+"\n";
+		return s;
+		
+	}
+	public boolean equals(Object o){
+		if (o == this) {
+            return true;
+        }
+ 
+        /* Check if o is an instance of Complex or not
+          "null instanceof [type]" also returns false */
+        if (!(o instanceof Item)) {
+            return false;
+        }
+         
+        // typecast o to Complex so that we can compare data members 
+        Complex c = (Complex) o;
+         
+        // Compare the data members and return accordingly 
+        return Double.compare(re, c.re) == 0
+                && Double.compare(im, c.im) == 0;
+    }
+	}
+	public String command;
+	public String symbol;
+	public int state;
+
+
+}

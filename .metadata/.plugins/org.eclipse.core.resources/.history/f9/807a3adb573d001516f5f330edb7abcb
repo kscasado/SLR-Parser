@@ -1,0 +1,13 @@
+import java.io.File;
+
+public class Grammar {
+	public Grammar(String fileName){
+		openFile(fileName);
+		
+	}
+	private void openFile(String name){
+		
+	}
+	private File prodList;
+
+}

@@ -1,0 +1,223 @@
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+public class SLRTable {
+	private Grammar grammar;
+	public List<String> productions = new ArrayList<String>();
+	private List<Item> States = new ArrayList<Item>();
+	private Map<Integer, Set<String>> itemMap = new TreeMap<Integer, Set<String>>();
+	public Map<Integer,ArrayList<Item>> stateList = new TreeMap<Integer,ArrayList<Item>;
+	public SLRTable(Grammar g) {
+		grammar = g;
+		productions.add(g.STARTSYMBOL + "' # " + g.STARTSYMBOL);
+		productions.addAll(g.getProductionsList());
+		buildCollection();
+		System.out.println(stateList);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void buildCollection() {
+
+		int i = 0;
+		int state = 1;
+		Set<String> temp = new LinkedHashSet<String>();
+		temp.add(productions.get(0));
+		temp.addAll(checkClosure(productions.get(0)));
+		itemMap.put(0, temp);
+		for (int iter = 0; iter < itemMap.size(); iter++) {
+			buildState(iter, 90);
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	private int buildState(int itemNum, int state) {
+		int i = itemNum;
+		for (String s : itemMap.get(i)) {
+			if (!isDuplicate(buildItem(itemMap.get(i), s))) {
+				if (buildItem(itemMap.get(i), s).size() > 0) {
+					stateAdd(i,goToOperation(new ArrayList<String>(itemMap.get(i)),s),state);
+					itemMap.put(itemMap.size(), buildItem(itemMap.get(i), s));
+					
+					state++;
+
+				} 
+			}
+
+		}
+
+		return state;
+	}
+	private void stateAdd(int item,List<String> goTos,int state){
+		stateList.put(item,getItemsFromgoto(goTos,state));
+		return;
+	}
+	private ArrayList<Item> getItemsFromgoto(List<String>goTo,int state){
+		ArrayList<Item> items = new ArrayList<Item>();
+		for(String s: goTo){
+			
+			String[] parse = s.split("\\s+");
+			for(int i = 0; i<parse.length;i++)
+			{
+				if(parse[i].trim().equals("#")){
+					if(i==parse.length){
+						items.add(new Item(parse[i-1].trim(),getProductionNumber(s),"R"));
+					}
+					else if(grammar.terminals.contains(parse[i-1].trim())){
+						items.add(new Item(parse[i-1].trim(),state,"S"));
+					
+					}
+					else{
+						items.add(new Item(parse[i-1].trim(),state,"G"));
+					}
+				}
+			}
+		}
+		
+		return items;
+	}
+	private int getProductionNumber(String s){
+		for(int i = 0; i<productions.size();i++){
+			String str = productions.get(i);
+			str.replace("->", "");
+			s.replace("#", "");
+			if(s.equals(str))
+				return i;
+		}
+		return -1;
+	}
+	private Set<String> buildItem(Set<String> previousItem, String entry) {
+		Set<String> itemList = new LinkedHashSet<String>();
+		List<String> list = new ArrayList<String>(previousItem);
+
+		int index = list.indexOf(entry);
+
+		String prod = list.get(index);
+		list = goToOperation(list, prod);
+		
+		itemList.addAll(list);
+		for (String s : list) {
+			itemList.addAll(checkClosure(s));
+
+		}
+		return itemList;
+	}
+
+	// get all of the variables for the string
+	private ArrayList<String> closure(String var) {
+		ArrayList<String> productions = new ArrayList<String>();
+
+		for (String s : grammar.getProductions(var)) {
+			productions.add(var + " # " + s);
+		}
+		return productions;
+	}
+
+	private Set<String> checkClosure(String production) {
+		Set<String> items = new LinkedHashSet<String>();
+		ArrayList<String> checker = new ArrayList<String>();
+		String[] iter = production.split("#");
+		if (iter.length == 2) {
+			if (grammar.getVariables().contains(iter[1].trim().split("\\s+")[0])) {
+				if (!iter[1].trim().split("\\s+")[0].equals(production.trim().split("\\s+")[0])) {
+					checker = closure(iter[1].trim().split("\\s+")[0]);
+					items.addAll(checker);
+					for (String s : checker) {
+						items.addAll(checkClosure(s));
+					}
+				}
+			}
+		}
+		return items;
+	}
+
+	private boolean isFinished() {
+		return false;
+	}
+
+	private boolean productionFinished(String prod) {
+		prod.trim();
+		if (prod.contains("#")) {
+			if (prod.indexOf("#") == prod.length()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private List<String> goToOperation(List<String> List, String prod) {
+		List<String> list = new ArrayList<String>();
+		String over = "";
+		String newString = "";
+		boolean swapTriggered = false;
+		for (String s : prod.split("\\s+")) {
+			s.trim();
+			if (s.equals("#")) {
+				swapTriggered = true;
+			} else if (swapTriggered && !s.equals("#")) {
+				swapTriggered = false;
+				over = s;
+				newString += s + " # ";
+
+			} else {
+
+				newString += s + " ";
+			}
+			for (String str : List) {
+				if (!goTo(str, over).equals("-1")) {
+					list.add(goTo(str, over));
+				}
+			}
+
+		}
+		return list;
+	}
+
+	private String goTo(String str, String ovr) {
+		boolean trigger = false;
+		boolean changed = false;
+		String newString = "";
+		for (String s : str.trim().split("\\s+")) {
+			if (s.trim().equals("#")) {
+				trigger = true;
+
+			} else if (trigger) {
+				trigger = false;
+				if (s.trim().equals(ovr)) {
+					changed = true;
+					newString += s + " # ";
+				}
+
+			} else {
+				newString += s + " ";
+			}
+		}
+		if (!changed) {
+			return ("-1");
+		} else {
+			return newString;
+		}
+	}
+
+	private boolean isDuplicate(Set<String> itemList) {
+		for (Integer i : itemMap.keySet()) {
+			if (itemMap.get(i).equals(itemList)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isFinished(int i) {
+		return false;
+	}
+
+	public Map<Integer, Set<String>> getItemMap() {
+		return itemMap;
+	}
+}

@@ -1,0 +1,15 @@
+import java.util.LinkedList;
+
+//Class for each state represented in the SLR
+
+public class State {
+	public State(){
+		
+	}
+	public void addItem(){
+		
+	}
+	private int number;
+	private LinkedList<Item> list;
+	
+}

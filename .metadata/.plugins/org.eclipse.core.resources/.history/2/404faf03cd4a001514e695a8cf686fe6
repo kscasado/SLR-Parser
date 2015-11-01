@@ -1,0 +1,21 @@
+//Class for the Item object
+public class Item {
+	
+	//Assign the private variables
+	public Item(char Symbol,int State,ArrayList<String> Prods){
+		//TODO: Error Check
+		
+		symbol = Symbol;
+		state=State;
+		productions = Prods
+		
+		
+	}
+	
+	
+	ArrayList<String> productions = new ArrayList<String>();
+	public char symbol;
+	public int state;
+
+
+}

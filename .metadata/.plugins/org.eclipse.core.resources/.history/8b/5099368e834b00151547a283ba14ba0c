@@ -1,0 +1,44 @@
+import java.util.ArrayList;
+
+//Class for the Item object
+public class Item {
+	
+	//Assign the private variables
+	public Item(String Symbol,int State,String Prods){
+		//TODO: Error Check
+		
+		symbol = Symbol;
+		state=State;
+		command = Prods;
+		
+		
+	}
+	public String toString(){
+		String s = "Symbol: "+ symbol+"\n"+"Command: "+command+"\n";
+		s+="Number: "+state+"\n";
+		return s;
+		
+	}
+	public boolean equals(Object o){
+		System.out.println("equals got used");
+		if (o == this) {
+            return true;
+        }
+ 
+        if (!(o instanceof Item)) {
+            return false;
+        }
+         
+        Item c = (Item) o;
+         
+        if(command.equals(c.command)&&symbol.equals(c.symbol)&&state==c.state){
+        	return true;
+        }
+        return false;
+	}
+	public String command;
+	public String symbol;
+	public int state;
+	
+
+}

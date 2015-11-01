@@ -1,0 +1,67 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+//Assuming a grammar is given in a text file and 
+//uses :: to signify a production, given the usual 
+//best practice having Variables as capitals and symbols as
+//non-capital characters/symbols
+public class Grammar {
+	public Grammar(String fileName){
+		try{
+			getProductionsFromFile(fileName);
+			findTerminalsFromList();
+			findVarFromList();
+			findFirstFromList();
+			findFollowFromList();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		
+	}
+	private void getProductionsFromFile(String name)throws IOException{
+		String fileText;
+		try {
+			FileReader inputFile = new FileReader(name);
+			BufferedReader br = new BufferedReader(inputFile);
+			
+			while((fileText=br.readLine())!=null){
+				productions.add(fileText);
+			}
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
+	}
+	private void findTerminalsFromList(){
+		
+	}
+	private void findVarFromList(){
+		
+	}
+	private void findFirstFromList(){
+		
+	}
+	private void findFollowFromList(){
+		
+	}
+	public ArrayList<String> getFollow(){
+		return Follow;
+	}
+	public ArrayList<String> getFirst(){
+		return First;
+	}
+	private ArrayList<String> terminals;
+	private ArrayList<String> variables;
+	private ArrayList<String> productions;
+	private ArrayList<String> First;
+	private ArrayList<String> Follow;
+}

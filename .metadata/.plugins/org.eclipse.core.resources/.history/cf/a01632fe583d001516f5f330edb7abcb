@@ -1,0 +1,30 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class Grammar {
+	public Grammar(String fileName){
+		text =getFileToString(fileName);
+		
+	}
+	private String getFileToString(String name)throws IOException{
+		String fileText;
+		try {
+			FileReader inputFile = new FileReader(name);
+			BufferedReader br = new BufferedReader(inputFile);
+			while(br.readLine()){
+			
+			}
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+	}
+	private String text;
+
+}

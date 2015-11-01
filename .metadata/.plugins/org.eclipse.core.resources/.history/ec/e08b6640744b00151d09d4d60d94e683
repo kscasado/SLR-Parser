@@ -1,0 +1,27 @@
+import java.util.ArrayList;
+
+//Class for the Item object
+public class Item {
+	
+	//Assign the private variables
+	public Item(String Symbol,int State,String Prods){
+		//TODO: Error Check
+		
+		symbol = Symbol;
+		state=State;
+		command = Prods;
+		
+		
+	}
+	public String toString(){
+		String s = "State: "+ state+"\n"+"Command: "+command+"\n";
+		s+="Symbol: "+symbol+"\n";
+		
+	}
+	
+	public String command;
+	public String symbol;
+	public int state;
+
+
+}

@@ -1,0 +1,21 @@
+//Class for the Item object
+public class Item {
+	
+	//Assign the private variables
+	public Item(char Symbol,int State,char Action){
+		//TODO: Error Check
+		
+		symbol = Symbol
+		state=State;
+		action=Action;
+		
+		
+	}
+	
+	
+	public char action;
+	public char symbol;
+	public int state;
+
+
+}

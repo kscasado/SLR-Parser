@@ -1,0 +1,23 @@
+import java.util.ArrayList;
+
+public class SLRTable {
+	private Grammar grammar;
+	public SLRTable(Grammar g){
+		grammar=g;
+		buildCollection();
+	}
+
+	private ArrayList<Item> buildCollection(){
+		ArrayList<Item> itemList = new ArrayList<Item>();
+		int i = 0;
+		//build first item
+		while (true){
+			
+		}
+		return itemList;
+	}
+	private closure(String var){
+		
+	}
+	
+}

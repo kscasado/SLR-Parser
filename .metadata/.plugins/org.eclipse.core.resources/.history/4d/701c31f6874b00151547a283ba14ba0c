@@ -1,0 +1,84 @@
+import java.util.Scanner;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+
+public class Driver {
+
+	public static void main(String[] args) {
+//		System.out.println("Please Enter the text file for the Grammar List");
+//		Scanner in = new Scanner(System.in);
+//		
+//		String filename = in.nextLine();
+		Grammar g = new Grammar("GrammarList.txt");
+		SLRTable slr = new SLRTable(g);
+		//in.close();
+		writeToFiles(g,slr);
+	}
+	public static void writeToFiles(Grammar g,SLRTable slr){
+		try{
+			
+			File file= new File("Terminals.txt");
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			
+			BufferedWriter bw = new BufferedWriter(fw);
+			for(String t: g.getTerminals()){
+				bw.write(t);
+				bw.newLine();
+			}
+			bw.close();
+			System.out.println("Terminals got written to terminals.txt");
+			 file= new File("Variables.txt");
+			 fw = new FileWriter(file.getAbsoluteFile());
+			
+			 bw = new BufferedWriter(fw);
+			for(String t: g.getVariables()){
+				bw.write(t);
+				bw.newLine();
+			}
+			System.out.println("Variables got written to Variables.txt");
+			bw.close();
+			file = new File("First.txt");
+			fw = new FileWriter(file.getAbsoluteFile());
+			bw = new BufferedWriter(fw);
+			for(String t:g.getFirst().keySet()){
+				bw.write(t+"="+g.getFirst().get(t));
+				bw.newLine();
+			}
+			bw.close();
+			System.out.println("Follow Written to \"First.txt\"");
+			file = new File("Follow.txt");
+			fw = new FileWriter(file.getAbsoluteFile());
+			bw = new BufferedWriter(fw);
+			for(String t:g.getFollow().keySet()){
+				bw.write(t+"="+g.getFollow().get(t));
+				bw.newLine();
+			}
+			bw.close();
+			System.out.println("First Written to \"Follow.txt\"");
+			file = new File("Items.txt");
+			fw = new FileWriter(file.getAbsoluteFile());
+			bw = new BufferedWriter(fw);
+			for (Integer integer : slr.getItemMap().keySet()) {
+				bw.write("---------------State " + integer + "----------");
+				bw.newLine();
+				for (String s : slr.getItemMap().get(integer)) {
+					bw.write(s);
+					bw.newLine();
+				}
+				bw.write("---------------------------------------------");
+				bw.newLine();
+			}
+			bw.close();
+			System.out.println("Items Written to \"Items.txt\"");
+			
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+	
+	}
+
+}
